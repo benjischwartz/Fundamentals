@@ -9,22 +9,24 @@ int search(std::vector<int>& nums, int target) {
         if (nums[mid] == target) {
             return mid;
         }
-        // Left subarray is sorted 
-        if (nums[mid] > nums[lo]) {
-            // Contains target --> search left
+        // in left sorted subarray
+        if (nums[mid] >= nums[lo]) {
+            // Search left
             if (nums[mid] > target && nums[lo] <= target) {
                 hi = mid - 1;
             }
-            // Doesn't contain target --> search right
+            // Search right
             else {
                 lo = mid + 1;
             }
         }
-        // Right subarray is sorted and contains target
-        else if (nums[mid] < nums[hi]) {
+        // in right sorted subarray
+        else {
+            // Search right
             if (nums[mid] < target && nums[hi] >= target) {
                 lo = mid + 1;
             }
+            // Search left
             else {
                 hi = mid - 1;
             }
