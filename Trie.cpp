@@ -1,47 +1,38 @@
-#include <string>
+#include "Trie.h"
 
-#define ALPHABET_SIZE 26
-#define ROOT_CHAR -1
-
-struct TrieNode {
-    TrieNode(char v) : value(v) {};
-    char value;
-    bool is_terminal = false;
-    TrieNode** children [ALPHABET_SIZE];
-};
-
-class Trie {
-public:
-    Trie() {
-        root = new TrieNode(ROOT_CHAR);
-    }
-   
-    void insert(std::string word) {
-        TrieNode* cur = root;
-        int i = 0;
-        // DFS until null child node is encountered.
-        while (i < word.size() && cur->children[word[i] - 'a'] != nullptr) {
-            cur = *cur->children[word[i] - 'a'];
-            ++i;
+void Trie::insert(std::string word) {
+    TrieNode* curNode = m_root;
+    for (auto c : word) {
+        if (curNode->children[c - 'a'] == nullptr) {
+            TrieNode* newNode = new TrieNode;
+            curNode->children[c - 'a'] = newNode;
         }
-        // add nodes as needed
-        while (i < word.size()) {
-            TrieNode* new_node = new TrieNode(word[i]);
-            cur[word[i] - 'a'] = *new_node;
+        curNode = curNode->children[c - 'a'];
+    }
+    curNode->terminal = true;
+}
+
+bool Trie::search(std::string word) {
+    TrieNode* curNode = m_root;
+    for (auto c : word) {
+        if (curNode->children[c - 'a'] == nullptr) {
+            return false;
         }
-        // mark final node as terminal
+        curNode = curNode->children[c - 'a'];
+    }
+    if (!curNode->terminal) {
+        return false;
+    }
+    return true;
+}
 
+bool Trie::startsWith(std::string prefix) {
+    TrieNode* curNode = m_root;
+    for (auto c : prefix) {
+        if (curNode->children[c - 'a'] == nullptr) {
+            return false;
+        }
+        curNode = curNode->children[c - 'a'];
     }
-    
-    bool search(std::string word) {
-        return true;
-        
-    }
-    
-    bool startsWith(std::string prefix) {
-        return true;
-    }
-private:
-    TrieNode* root;
-};
-
+    return true;
+}
