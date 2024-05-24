@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unordered_set>
+#include <vector>
 
 struct TreeNode {
     int val;    
@@ -17,6 +18,7 @@ class Tree {
 public:
     Tree(TreeNode* root) : root(root) {};
     void printTree(Traversal);
+    void prettyPrint();
     void insert(int val);
     TreeNode* getRoot() { return root; };
 private:
@@ -25,6 +27,34 @@ private:
     void preOrderHelper(std::unordered_set<TreeNode*>&, TreeNode*);
     void postOrderHelper(std::unordered_set<TreeNode*>&, TreeNode*);
 };
+
+int height(TreeNode* root) {
+    if (root == nullptr) { return -1; }
+    return 1 + std::max(height(root->left), height(root->right));
+}
+
+void dfs(std::vector<std::vector<char>>& matrix, int r, int c, int h, TreeNode* root) {
+    if (root == nullptr) {
+        return;
+    }
+    matrix[r][c] = '0' + root->val;
+    dfs(matrix, r + 1, c - pow(2, h - r - 1), h, root->left);
+    dfs(matrix, r + 1, c + pow(2, h - r - 1), h, root->right);
+}
+
+void Tree::prettyPrint() {
+    int h = height(root);
+    int m = h + 1;
+    int n = pow(2, (h + 1)) - 1;
+    std::vector<std::vector<char>> matrix(m, std::vector<char>(n, ' '));
+    dfs(matrix, 0, (n - 1) / 2, h, root);
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            std::cout << matrix[i][j];
+        }
+        std::cout << std::endl;
+    }
+}
 
 void Tree::printTree(Traversal t) {
     std::unordered_set<TreeNode*> visited;

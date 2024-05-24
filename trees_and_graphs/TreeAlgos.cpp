@@ -1,5 +1,6 @@
 #include "Tree.cpp"
 #include <cstdlib>
+#include <queue>
 #include <unordered_set>
 
 void dfsHeight(int& maxHeight, int& minHeight, TreeNode* node, int height);
@@ -28,15 +29,50 @@ void dfsHeight(int& maxHeight, int& minHeight, TreeNode* node, int height) {
     }
 }
 
+/* Create a binary tree with minimal height, given a sorted, increasing array */
+TreeNode* createMinHeightTree(std::vector<int>& vals) 
+{
+    if (vals.empty()) { return nullptr; };
+
+    std::queue<TreeNode*> to_visit;
+    TreeNode* root = new TreeNode{vals[0]};
+    to_visit.push(root);
+
+    for (int i = 1; i < vals.size(); ++i) 
+    {
+        TreeNode* curNode = to_visit.front();
+        TreeNode* newNode = new TreeNode{vals[i]};
+        if (curNode->left == nullptr) 
+        {
+            curNode->left = newNode;
+        }
+        else 
+        {
+            curNode->right = newNode;
+            to_visit.pop();
+        }
+        to_visit.push(newNode);
+    }
+    return root;
+}
+
 int main()
 {
     Tree test_tree = createTree();
     assert(!isBalanced(test_tree.getRoot()));
     test_tree.getRoot()->right->right->right = new TreeNode{9};
-    test_tree.getRoot()->left->right->right = new TreeNode{10};
-    test_tree.getRoot()->left->right->left = new TreeNode{11};
-    test_tree.getRoot()->left->left->right = new TreeNode{12};
-    test_tree.getRoot()->left->left->left = new TreeNode{13};
+    test_tree.getRoot()->left->right->right = new TreeNode{8};
+    test_tree.getRoot()->left->right->left = new TreeNode{7};
+    test_tree.getRoot()->left->left->right = new TreeNode{6};
+    test_tree.getRoot()->left->left->left = new TreeNode{5};
     test_tree.printTree(Traversal::InOrder);
     assert(isBalanced(test_tree.getRoot()));
+    std::cout << "Pretty printing...\n";
+    test_tree.prettyPrint();
+    
+    std::cout << "Testing min height tree...\n";
+    std::vector<int> test_vec {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    TreeNode* res = createMinHeightTree(test_vec);
+    test_tree = Tree{res};
+    test_tree.prettyPrint();
 };
